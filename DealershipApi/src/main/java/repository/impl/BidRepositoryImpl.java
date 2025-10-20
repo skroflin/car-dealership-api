@@ -2,6 +2,8 @@ package repository.impl;
 
 import model.Bid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import repository.BidRepository;
@@ -16,12 +18,22 @@ public class BidRepositoryImpl implements BidRepository {
 
     @Override
     public List<Bid> getAllBids() {
-        return List.of();
+        String query =
+                """
+                select * from bids
+                """;
+        List<Bid> allBids = template.query(query, new BeanPropertyRowMapper<Bid>(Bid.class));
+        return allBids;
     }
 
     @Override
     public Bid getBidById(long id) {
-        return null;
+        String query =
+                """
+                select * from bids where bid_id = ?
+                """;
+        Bid bid = template.queryForObject(query, BeanPropertyRowMapper.newInstance(Bid.class), id);
+        return bid;
     }
 
     @Override

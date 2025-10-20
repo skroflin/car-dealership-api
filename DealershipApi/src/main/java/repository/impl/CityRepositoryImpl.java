@@ -2,6 +2,7 @@ package repository.impl;
 
 import model.City;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import repository.CityRepository;
@@ -16,16 +17,30 @@ public class CityRepositoryImpl implements CityRepository {
 
     @Override
     public List<City> getAllCities() {
-        return List.of();
+        String query =
+                """
+                select * from city
+                """;
+        List<City> allCities = template.query(query, new BeanPropertyRowMapper<City>(City.class));
+        return allCities;
     }
 
     @Override
     public City getCityById(long id) {
-        return null;
+        String query =
+                """
+                select * from city where city_id = ?
+                """;
+        City city = template.queryForObject(query, BeanPropertyRowMapper.newInstance(City.class), id);
+        return city;
     }
 
     @Override
     public int addCity(City city) {
-        return 0;
+        String query =
+                """
+                insert into city(name, longitude, latitude) values (?, ?, ?)
+                """;
+        return template.update(query, city.getName(), city.getLongitude(), city.getLatitude());
     }
 }
