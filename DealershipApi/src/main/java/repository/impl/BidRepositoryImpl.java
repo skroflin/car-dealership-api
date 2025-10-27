@@ -38,16 +38,35 @@ public class BidRepositoryImpl implements BidRepository {
 
     @Override
     public int addBid(Bid bid) {
-        return 0;
+        String query =
+                """
+                insert into 
+                bids(sale_id, buyer_id, date_bid, bid_price) 
+                values (?, ?, ?, ?)
+                """;
+        return template.update(query, bid.getSaleId(), bid.getBuyerId(), bid.getDateBid(), bid.getBidPrice());
     }
 
     @Override
     public int updateBid(Bid bid) {
-        return 0;
+        String query =
+                """
+                update bids 
+                set sale_id = ?, 
+                buyer_id = ?, 
+                date_bid = ?, 
+                bid_price = ? 
+                where bid_id = ?
+                """;
+        return template.update(query, bid.getBidId(), bid.getSaleId(), bid.getBuyerId(), bid.getDateBid(), bid.getBidPrice());
     }
 
     @Override
     public int deleteBidById(long id) {
-        return 0;
+        String query =
+                """
+                delete from bids where bid_id = ?
+                """;
+        return template.update(query, id);
     }
 }
